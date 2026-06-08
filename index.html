@@ -50,18 +50,17 @@
 
     <main class="views">
       <section class="view active" id="view-dashboard" aria-labelledby="dashboard-title">
-        <div class="hero-panel">
-          <div>
-            <p class="eyebrow">AI Energy Management</p>
-            <h2 id="dashboard-title">Intelligent Charging Advisory</h2>
-            <p class="timestamp" id="lastUpdate">Waiting for Firebase data</p>
-          </div>
-           <span id="predictionUpdated">
-                Lastest AI prediction: --
-              </span>
-          <div class="solar-mark" aria-hidden="true">
-            <img src="image-generation_oMCapdmWBbZ1DIg8MDXz5peCkTf2_1749673400478_result.jpeg" alt="">
-          </div>
+          <div class="hero-panel">
+            <div class="hero-text">
+              <p class="eyebrow">AI Energy Management</p>
+              <h2 id="dashboard-title">Intelligent Charging Advisory</h2>
+              <p class="timestamp" id="lastUpdate">Latest live monitoring: --</p>
+              <p class="timestamp" id="predictionUpdated">Latest AI Prediction: --</p>
+            </div>
+
+            <div class="solar-mark" aria-hidden="true">
+              <img src="image-generation_oMCapdmWBbZ1DIg8MDXz5peCkTf2_1749673400478_result.jpeg" alt="">
+            </div>
         </div>
 
         <section class="prediction-panel" aria-live="polite">
@@ -159,7 +158,6 @@
         <div class="hero-panel">
           <div>
             <p class="eyebrow">Real-Time Monitoring</p>
-            <h2>System Measurements</h2>
             <p class="timestamp">
               Live sensor data collected from ESP32 and Firebase
             </p>

@@ -763,64 +763,28 @@ h3 {
 
 }
 
-.impact-message-card {
-
-  display: flex;
-  gap: 18px;
-  align-items: center;
-
-  margin-top: 18px;
-  padding: 20px;
-
-  border-radius: 16px;
-
-  background:
-    linear-gradient(135deg,#ecfff7,#ffffff);
-
-  border: 1px solid #cdeee2;
+.hero-panel {
+  display: grid !important;
+  grid-template-columns: 1fr 120px !important;
+  align-items: center !important;
 }
 
-
-.impact-icon {
-
-  width: 60px;
-  height: 60px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  border-radius:50%;
-
-  background:#dff8ed;
-
-  font-size:28px;
-
+.hero-text {
+  min-width: 0;
 }
 
-
-.impact-message-card span {
-
-  color:#00795f;
-  font-weight:700;
-  font-size:12px;
-
+.solar-mark {
+  justify-self: end !important;
+  align-self: center !important;
 }
 
+@media (max-width: 520px) {
+  .hero-panel {
+    grid-template-columns: 1fr 92px !important;
+  }
 
-.impact-message-card strong {
-
-  display:block;
-  margin-top:4px;
-
-  font-size:18px;
-
-}
-
-
-.impact-message-card p {
-
-  margin-top:6px;
-  color:#64756e;
-
+  .solar-mark {
+    width: 92px !important;
+    height: 92px !important;
+  }
 }
