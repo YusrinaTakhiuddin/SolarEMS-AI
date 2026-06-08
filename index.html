@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f7c66">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Solar Panda">
+  <title>Solar Panda</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <link 
+  rel="stylesheet" 
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div class="splash-screen" id="splashScreen">
+
+    <img 
+      src="icon-512.png" 
+      alt="SolarEMS AI Logo"
+      class="splash-logo"
+    >
+
+    <h2>SolarEMS AI</h2>
+
+    <p>
+      Intelligent Solar Charging Station
+    </p>
+  </div>
+
+  <div class="shell">
+    <header class="topbar">
+      <div>
+        <h1>SolarEMS AI</h1>
+      </div>
+      <div class="connection-pill" id="connectionStatus">
+        <span class="status-dot"></span>
+        <span>Connecting</span>
+      </div>
+    </header>
+
+    <main class="views">
+      <section class="view active" id="view-dashboard" aria-labelledby="dashboard-title">
+        <div class="hero-panel">
+          <div>
+            <p class="eyebrow">AI Energy Management</p>
+            <h2 id="dashboard-title">Intelligent Charging Advisory</h2>
+            <p class="timestamp" id="lastUpdate">Waiting for Firebase data</p>
+          </div>
+          <div class="solar-mark" aria-hidden="true">
+            <img src="image-generation_oMCapdmWBbZ1DIg8MDXz5peCkTf2_1749673400478_result.jpeg" alt="">
+          </div>
+        </div>
+
+        <section class="prediction-panel" aria-live="polite">
+          <div class="prediction-mode" id="predictionMode">--</div>
+          <div class="prediction-content">
+            <div class="prediction-header">
+              <p class="eyebrow">AI ENERGY MODE</p>
+              <span id="predictionUpdated">
+                Last update: --
+              </span>
+            </div>
+            <h2 id="predictionTitle">--</h2>
+            <p id="predictionSummary">
+              Waiting for AI recommendation...
+            </p>
+
+          </div>
+        </section>
+
+        <section class="user-status-panel">
+          <div class="user-status-main">
+            <p class="eyebrow">For Users</p>
+            <h3 id="userChargingStatus">Checking availability</h3>
+            <p id="userStatusMessage">The app will translate the technical readings into a simple charging status.</p>
+          </div>
+          <div class="user-status-grid">
+            <article>
+              <span>Can charge now?</span>
+              <strong id="userCanCharge">--</strong>
+            </article>
+            <article>
+              <span>Estimated support</span>
+              <strong id="userRuntime">--</strong>
+            </article>
+            <article>
+              <span>Storage battery level</span>
+              <div class="battery-head">
+            <div>
+              <h3 id="batteryStatus">Detecting</h3>
+            </div>
+            <strong id="batteryPercent">--%</strong>
+          </div>
+          <div class="battery-meter" aria-hidden="true">
+            <div id="batteryFill"></div>
+          </div>
+            </article>
+            <article>
+              <span>System safety</span>
+              <strong id="userSafetyStatus">--</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="battery-panel analysis-panel">
+
+          <h3>Real-Time Energy Parameters</h3>
+
+          <p class="eyebrow">Solar Performance</p>
+
+          <div class="metric-grid">
+
+            <article class="metric-card accent">
+              <span>PV Power</span>
+              <strong id="pvPower">-- W</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>Irradiance</span>
+              <strong id="irradiance">-- W/m²</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>Ambient Temperature</span>
+              <strong id="temperature">-- °C</strong>
+            </article>
+
+          </div>
+
+          <div class="section-divider"></div>
+          <p class="eyebrow ai-title">AI Prediction Details</p>
+
+          <div class="metric-grid">
+
+            <article class="metric-card accent">
+              <span>Predicted PV Power</span>
+              <strong id="forecastWindow">-- W</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>AI Model</span>
+              <strong id="aiSampleCount">Random Forest</strong>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" id="view-monitoring" aria-labelledby="solar-title">
+        <div class="hero-panel">
+          <div>
+            <p class="eyebrow">Real-Time Monitoring</p>
+            <h2>System Measurements</h2>
+            <p class="timestamp">
+              Live sensor data collected from ESP32 and Firebase
+            </p>
+          </div>
+        </div>
+
+
+        <!-- Solar Monitoring -->
+        <section class="battery-panel">
+
+          <p class="eyebrow">Solar Input Monitoring</p>
+
+          <div class="charging-status-row">
+            <div>
+              <span>Solar Charging Status</span>
+              <strong id="solarChargingStatus">Detecting...</strong>
+            </div>
+
+            <div id="solarIcon" class="solar-panel-icon charging">
+              <i class="fas fa-solar-panel"></i>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+
+            <article class="metric-card accent">
+              <span>PV Voltage</span>
+              <strong id="pvVoltage">-- V</strong>
+            </article>
+
+            <article class="metric-card accent">
+              <span>PV Current</span>
+              <strong id="pvCurrent">-- A</strong>
+            </article>
+
+            <article class="metric-card accent">
+              <span>PV Power</span>
+              <strong id="pvPowerSolar">-- W</strong>
+            </article>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Storage Monitoring -->
+        <section class="battery-panel">
+
+          <p class="eyebrow">Storage Battery Monitoring</p>
+
+          <div class="metric-grid">
+
+            <article class="metric-card">
+              <span>Battery Voltage</span>
+              <strong id="batteryVoltageMonitor">-- V</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>Battery Current</span>
+              <strong id="batteryCurrentMonitor">-- A</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>Battery Power</span>
+              <strong id="batteryPowerMonitor">-- W</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>Available Power</span>
+              <strong id="netPower">-- W</strong>
+            </article>
+
+          </div>
+
+        </section>
+
+
+
+        <!-- Load Monitoring -->
+        <section class="battery-panel">
+
+          <p class="eyebrow">Load Output Monitoring</p>
+
+          <div class="metric-grid">
+
+            <article class="metric-card">
+              <span>Load Current</span>
+              <strong id="loadCurrent">-- A</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>Load Power</span>
+              <strong id="loadPower">-- W</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>Load Status</span>
+              <strong id="loadLevel">--</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>Runtime Estimate</span>
+              <strong id="runtimeEstimate">--</strong>
+            </article>
+
+          </div>
+
+        </section>
+
+</section>
+
+   <section class="view" id="view-ai">
+
+    <div class="section-head">
+      <p class="eyebrow">Project Impact</p>
+      <h2>Energy & AI Analysis</h2>
+    </div>
+
+    <!-- AI -->
+    <section class="battery-panel">
+
+      <p class="eyebrow">Machine Learning Model</p>
+
+      <div class="metric-grid">
+
+        <article class="metric-card accent">
+          <span>Algorithm</span>
+          <strong>Random Forest</strong>
+        </article>
+
+        <article class="metric-card">
+          <span>MAE</span>
+          <strong>3.2871</strong>
+        </article>
+
+        <article class="metric-card">
+          <span>RMSE</span>
+          <strong>4.1290</strong>
+        </article>
+
+        <article class="metric-card">
+          <span>R² Score</span>
+          <strong>0.1280</strong>
+        </article>
+
+      </div>
+
+    </section>
+
+    <section class="chart-card">
+
+      <div class="chart-title">
+        <div>
+          <p class="eyebrow">Energy Analysis</p>
+          <strong>Actual vs Predicted PV Power Trend</strong>
+        </div>
+
+        <span id="today-date">--</span>
+      </div>
+
+      <div class="graph-wrapper">
+        <canvas id="todayChart"></canvas>
+      </div>
+
+    </section>
+
+    <section class="chart-card">
+
+      <div class="chart-title">
+        <div>
+          <p class="eyebrow">Weekly Performance</p>
+          <strong>Solar Energy Contribution</strong>
+        </div>
+      </div>
+
+      <div class="graph-wrapper">
+        <canvas id="weeklyChart"></canvas>
+      </div>
+
+    </section>
+
+    <!-- Energy Impact -->
+    <section class="battery-panel">
+    <p class="eyebrow">Sustainability Impact</p>
+
+      <div class="metric-grid">
+
+        <article class="metric-card accent">
+          <span>⚡ Solar Energy Generated</span>
+          <strong id="energyGenerated">-- Wh</strong>
+        </article>
+
+
+        <article class="metric-card">
+          <span>🌱 CO₂ Emission Avoided</span>
+          <strong id="co2Saved">-- kg</strong>
+        </article>
+
+
+        <article class="metric-card">
+          <span>💰 Estimated Green Value</span>
+          <strong>
+            RM <span id="greenValue">--</span>
+          </strong>
+        </article>
+
+
+        <article class="metric-card">
+          <span>☀️ Clean Energy Source</span>
+          <strong>Solar PV</strong>
+        </article>
+      </div>
+
+      <div class="impact-message-card">
+
+      <div class="impact-icon">🌱</div>
+
+      <div>
+        <span>Green Achievement</span>
+        <strong id="impactTitle">
+          Waiting for Solar Contribution
+        </strong>
+
+        <p id="impactMessage">
+          Start generating solar energy to track your environmental impact.
+        </p>
+      </div>
+    </div>
+
+  </section>
+  </section>
+
+  </main>
+    <nav class="bottom-nav" aria-label="Primary">
+      <button class="nav-button active" type="button" data-view="dashboard">
+        <span class="nav-icon">⚡</span>
+        <span>Energy AI</span>
+      </button>
+
+      <button class="nav-button" type="button" data-view="monitoring">
+        <span class="nav-icon">🤖</span>
+        <span>IoT Monitor</span>
+      </button>
+
+      <button class="nav-button" type="button" data-view="ai">
+        <span class="nav-icon">📊</span>
+        <span>Analysis</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
