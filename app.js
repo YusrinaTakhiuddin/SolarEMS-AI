@@ -86,12 +86,15 @@ function attachDataListeners(database) {
     setText("pvTrend", prediction.updated_time.split(" ")[1]);
     setText("batteryTrend", `${formatNumber(prediction.latest_battery_voltage_V, 2)} V`);
     setText("aiSampleCount", "Random Forest");
-    setText("predictionUpdated", prediction.updated_time || "--");
+    setText(
+  "predictionUpdated",
+  `Latest AI Prediction: ${prediction.updated_time || "--"}`
+);
 
-    renderReasons([
-      prediction.reason || "Waiting for AI recommendation."
-    ]);
-  });
+        renderReasons([
+          prediction.reason || "Waiting for AI recommendation."
+        ]);
+      });
 
   loadChartData(database);
 }
@@ -179,7 +182,7 @@ function updateDashboard(data) {
   setText("batteryPowerMonitor", `${formatNumber(batteryPower, 2)} W`);
   setText("batteryPercentMonitor", `${batteryPercent}%`);
 
-  setText("lastUpdate", `Sensor update: ${formatTimestamp(data.timestamp, data.dateKey, data.timeKey)}`);
+  setText("lastUpdate", `Latest live monitoring: ${formatTimestamp(data.timestamp, data.dateKey, data.timeKey)}`);
   setText("batteryStatus", batteryStatus);
   setText("batteryPercent", `${batteryPercent}%`);
   $("batteryFill").style.width = `${batteryPercent}%`;
