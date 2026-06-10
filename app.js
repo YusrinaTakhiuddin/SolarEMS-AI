@@ -312,15 +312,20 @@ function estimateRuntime(loadPower) {
 
 function updateEcoImpact(totalEnergyWh) {
 
+  // Convert Wh to kWh
   const kWh = totalEnergyWh / 1000;
 
 
-  // Malaysia average grid emission factor
-  const co2Saved = kWh * 0.7;
+  // CO2 avoided
+  // 0.6 kg CO2 per kWh
+  // convert kg to gram
+  const co2Saved = kWh * 0.6 * 1000;
 
 
-  // Estimated carbon value
-  const greenValue = co2Saved * 0.07;
+  // Estimated electricity saving
+  // assume RM0.50 per kWh
+  // convert RM to sen
+  const greenValue = kWh * 0.50 * 100;
 
 
   setText(
@@ -331,14 +336,42 @@ function updateEcoImpact(totalEnergyWh) {
 
   setText(
     "co2Saved",
-    `${formatNumber(co2Saved, 3)} kg`
+    `${formatNumber(co2Saved, 2)} g`
   );
 
+
+setText(
+  "greenValue",
+  `${formatNumber(greenValue, 2)} sen`
+);
+
+
+// Green achievement threshold
+if (totalEnergyWh >= 0.1) {
 
   setText(
-    "greenValue",
-    `RM ${formatNumber(greenValue, 4)}`
+    "impactTitle",
+    "Green Contributor 🌱"
   );
+
+  setText(
+    "impactMessage",
+    "Your solar system has generated clean energy and reduced carbon impact."
+  );
+
+} else {
+
+  setText(
+    "impactTitle",
+    "Waiting for Solar Contribution"
+  );
+
+  setText(
+    "impactMessage",
+    "Start generating solar energy to track your environmental impact."
+  );
+
+}
 
 }
 
