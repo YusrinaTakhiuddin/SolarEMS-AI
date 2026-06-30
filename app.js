@@ -140,7 +140,7 @@ function updateDashboard(data) {
   
   const pvPower = Number(data.pv_power_W) || pvVoltage * pvCurrent;
   const batteryPower = Number(data.battery_power_W) || batteryVoltage * batteryCurrent;
-  const loadPower = batteryVoltage > 1 ? batteryVoltage * loadCurrent : NOMINAL_LOAD_VOLTAGE * loadCurrent;
+  const loadLevel = getLoadLevel(loadCurrent);
   const netPower = pvPower - loadPower;
   const batteryPercent = estimateBatteryPercent(batteryVoltage);
   const batteryStatus = getBatteryStatus(batteryPercent);
@@ -201,15 +201,12 @@ function updateDashboard(data) {
   setText("chargingState", pvPower > 0.5 ? "Charging" : "Idle");
 
   setText("loadCurrent", `${formatNumber(loadCurrent, 3)} A`);
-  setText("loadPower", `${formatNumber(loadPower, 2)} W`);
-  setText("runtimeEstimate", estimateRuntime(loadPower));
   setText("loadLevel", loadLevel);
 
   updateUserStatus({
     batteryPercent,
     batteryStatus,
     loadPower,
-    runtime: estimateRuntime(loadPower),
     temperature: Number(data.temperature_C) || 0,
     pvPower,
     netPower,
@@ -250,7 +247,6 @@ function updateUserStatus(system) {
   setText("userChargingStatus", availability);
   setText("userStatusMessage", message);
   setText("userCanCharge", canCharge);
-  setText("userRuntime", system.runtime);
   setText("userBatteryLevel", `${system.batteryPercent}% (${system.batteryStatus})`);
   setText("userSafetyStatus", safety);
 }
@@ -294,20 +290,11 @@ function getBatteryStatus(percent) {
   return "Critical";
 }
 
-function getLoadLevel(loadPower) {
-  if (!Number.isFinite(loadPower) || loadPower <= 0.2) return "No Load";
-  if (loadPower < 6) return "Low";
-  if (loadPower < 18) return "Normal";
+function getLoadLevel(loadCurrent) {
+  if (!Number.isFinite(loadCurrent) || loadCurrent <= 0.01) return "No Load";
+  if (loadCurrent < 0.10) return "Low";
+  if (loadCurrent < 0.50) return "Normal";
   return "High";
-}
-
-function estimateRuntime(loadPower) {
-  if (!Number.isFinite(loadPower) || loadPower <= 0.2) return "Standby";
-
-  const hours = BATTERY_CAPACITY_WH / loadPower;
-  const wholeHours = Math.floor(hours);
-  const minutes = Math.round((hours - wholeHours) * 60);
-  return `${wholeHours}h ${minutes}m`;
 }
 
 function updateEcoImpact(totalEnergyWh) {
