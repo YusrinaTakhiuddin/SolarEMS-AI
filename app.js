@@ -141,7 +141,7 @@ function updateDashboard(data) {
   const pvPower = Number(data.pv_power_W) || pvVoltage * pvCurrent;
   const batteryPower = Number(data.battery_power_W) || batteryVoltage * batteryCurrent;
   const loadLevel = getLoadLevel(loadCurrent);
-  const netPower = pvPower - loadPower;
+  const netPower = pvPower;
   const batteryPercent = estimateBatteryPercent(batteryVoltage);
   const batteryStatus = getBatteryStatus(batteryPercent);
 
