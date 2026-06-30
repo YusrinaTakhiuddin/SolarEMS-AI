@@ -134,7 +134,7 @@ function updateDashboard(data) {
 
   let loadCurrent = Number(data.load_current_A) || 0;
 
-  if (Math.abs(loadCurrent) < 0.05) {
+  if (Math.abs(loadCurrent) < 0.01) {
     loadCurrent = 0;
   }
   
