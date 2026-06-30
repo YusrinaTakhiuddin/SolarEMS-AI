@@ -144,7 +144,6 @@ function updateDashboard(data) {
   const netPower = pvPower - loadPower;
   const batteryPercent = estimateBatteryPercent(batteryVoltage);
   const batteryStatus = getBatteryStatus(batteryPercent);
-  const loadLevel = getLoadLevel(loadPower);
 
   const isSolarCharging =
     pvPower > 0.5 && batteryCurrent > 0.05;
@@ -206,7 +205,6 @@ function updateDashboard(data) {
   updateUserStatus({
     batteryPercent,
     batteryStatus,
-    loadPower,
     temperature: Number(data.temperature_C) || 0,
     pvPower,
     netPower,
